@@ -1,16 +1,14 @@
 # Conway's Game of life World model
-#
 
-# =begin
+# Use like this
 # w = World.new(30,120)
 # w.clear
 # 
 # w.set_cell(3,6,1)
 # w.set_cell(3,7,1)
 # w.set_cell(3,8,1)
-# .print
+# 
 # w.loop
-
 
 class World
   attr_accessor :cells, :x, :y
@@ -38,23 +36,8 @@ class World
     end 
   end
 
-  def print
-    @x.times do |x|
-      line = "|"
-      @y.times do |y|
-        line += "#{print_cell(x,y)}"
-      end
-      puts line << "|\n" 
-    end 
-  end
-
-  def loop
-    while true
-      puts "\e[H\e[2J"  # clear screen
-      print
-      next_generation
-      sleep 0.1
-    end
+  def set_cell(x, y, value)
+    self.cells[index(x,y)] = value
   end
 
   private
@@ -63,16 +46,12 @@ class World
     each { |x,y| set_cell(x,y,0) }
   end
 
-  def set_cell(x, y, value)
-    self.cells[index(x,y)] = value
-  end
-
   def print_cell(x,y)
     alive?(x,y) ? "#" : " "
   end
 
   def next_state(x, y)
-    total = total_alive_neighs(x,y)
+    total = total_alive_neighbours(x,y)
     if alive?(x,y)
       [2,3].include?(total) ? 1 : 0
     else
@@ -80,8 +59,8 @@ class World
     end
   end
 
-  def total_alive_neighs(x,y)
-    neighs(x, y).reduce(0) { |sum, i| sum += i }
+  def total_alive_neighbours(x,y)
+    neighbours(x, y).reduce(0) { |sum, i| sum += i }
   end
 
   def setup_cells
@@ -101,7 +80,7 @@ class World
     cells[index(x,y)]
   end
 
-  def neighs(x, y)
+  def neighbours(x, y)
     neighbours = []
 
     [-1,0,1].each do |delta_x| 
